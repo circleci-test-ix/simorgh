@@ -11,6 +11,7 @@ import DocumentComponent from './component';
 const renderDocument = async ({
   bbcOrigin,
   data,
+  errorCode,
   isAmp,
   routes,
   service,
@@ -24,6 +25,7 @@ const renderDocument = async ({
         location={url}
         routes={routes}
         data={data}
+        errorCode={errorCode}
         bbcOrigin={bbcOrigin}
         context={{}}
         service={service}
@@ -40,7 +42,7 @@ const renderDocument = async ({
       assets={assets}
       assetOrigins={assetOrigins}
       app={app}
-      data={data}
+      errorCode={errorCode}
       styleTags={getStyleTag(sheet, isAmp)}
       helmet={headHelmet}
       service={service}

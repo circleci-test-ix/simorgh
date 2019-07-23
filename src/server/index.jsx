@@ -174,6 +174,7 @@ server
           await renderDocument({
             bbcOrigin,
             data,
+            errorCode,
             isAmp,
             routes,
             service,
