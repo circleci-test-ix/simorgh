@@ -25,14 +25,15 @@ commands:
       - run:
           name: Before Install
           command: |            
-            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A1715D88E1DF1F24
+            #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A1715D88E1DF1F24
             sudo apt update
             #sudo apt install git
             #sudo apt upgrade
-            sudo apt-get install -y libgconf-2-4 software-properties-common
-            sudo add-apt-repository ppa:git-core/ppa -y
-            sudo apt-get update
-            sudo apt-get install git -y
+            #sudo apt-get install -y libgconf-2-4 software-properties-common
+            #sudo add-apt-repository ppa:git-core/ppa -y
+            #sudo apt-get update
+            #sudo apt-get install git -y
+            sudo apt-get install -t stretch-backports git
             git --version
       - steps: << parameters.install-script >>
       - steps: << parameters.script >>
