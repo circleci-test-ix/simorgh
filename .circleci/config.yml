@@ -1,7 +1,11 @@
 version: 2.1
 
+orbs:
+  cypress: cypress-io/cypress@1
+
 executors:
-  default-executor:    
+  default-executor:
+    resource_class: medium+
     docker:
       - image: circleci/node:10-browsers
         environment:
@@ -20,19 +24,12 @@ commands:
         default: []
     steps:
       - checkout
-      # - restore_cache:
-      #     key: dependency-cache-app{{ checksum "package.json" }}      
+      - restore_cache:
+          key: dependencies-{{ .Environment.CIRCLE_JOB }}
       - run:
           name: Before Install
-          command: |            
-            #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A1715D88E1DF1F24
+          command: |
             sudo apt update
-            #sudo apt install git
-            #sudo apt upgrade
-            #sudo apt-get install -y libgconf-2-4 software-properties-common
-            #sudo add-apt-repository ppa:git-core/ppa -y
-            #sudo apt-get update
-            #sudo apt-get install git -y
             sudo apt-get install -t stretch-backports git
             git --version
       - steps: << parameters.install-script >>
@@ -88,3 +85,4 @@ workflows:
       - Unit_Tests_and_storybook_e2e
       - Production_CI_tests
       - Test_third_party_dependencies
+      - cypress/run
