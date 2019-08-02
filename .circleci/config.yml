@@ -1,0 +1,80 @@
+version: 2.1
+
+executors:
+  default-executor:    
+    docker:
+      - image: circleci/node:10-browsers
+        environment:
+          CC_TEST_REPORTER_ID: f5b40344b76ccf66fbab5aa40bd5db671464c74f255cc3d4063f8bcd7c0812cf
+          TRAVIS_TEST_RESULT: 0
+
+commands:
+  default-build-steps:
+    parameters:
+      install-script:
+        type: steps
+        default:
+          - run: npm ci
+      script:
+        type: steps
+        default: []
+    steps:
+      - checkout
+      # - restore_cache:
+      #     key: dependency-cache-app{{ checksum "package.json" }}      
+      - run:
+          name: Before Install
+          command: sudo apt-get install -y libgconf-2-4
+      - steps: << parameters.install-script >>
+      - steps: << parameters.script >>
+      - save_cache:
+          key: dependencies-{{ .Environment.CIRCLE_JOB }}
+          paths:
+            - ~/.cache/Cypress
+
+jobs:
+  Unit_Tests_and_storybook_e2e:
+    executor: default-executor
+    steps:
+      - default-build-steps:
+          script:            
+            - run:
+                name: Script
+                command: |
+                  curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+                  chmod +x ./cc-test-reporter
+                  ./cc-test-reporter before-build
+
+                  npm run test
+                  ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+  
+  Production_CI_tests:
+    executor: default-executor
+    steps:
+      - default-build-steps:
+          script:            
+            - run:
+                name: Script
+                command: |
+                  npm run build
+                  xvfb-run -a npm run test:prod:travis
+
+  Test_third_party_dependencies:
+    executor: default-executor
+    steps:
+      - default-build-steps:
+          install-script:
+            - run: npm install cypress@latest
+          script:            
+            - run:
+                name: Script
+                command: |
+                  xvfb-run -a npm run cypress:3rdParty
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - Unit_Tests_and_storybook_e2e
+      - Production_CI_tests
+      - Test_third_party_dependencies
