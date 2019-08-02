@@ -24,8 +24,6 @@ commands:
         default: []
     steps:
       - checkout
-      - restore_cache:
-          key: dependencies-{{ .Environment.CIRCLE_JOB }}
       - run:
           name: Before Install
           command: |
@@ -34,10 +32,6 @@ commands:
             git --version
       - steps: << parameters.install-script >>
       - steps: << parameters.script >>
-      - save_cache:
-          key: dependencies-{{ .Environment.CIRCLE_JOB }}
-          paths:
-            - ~/.cache/Cypress
 
 jobs:
   Unit_Tests_and_storybook_e2e:
@@ -66,6 +60,7 @@ jobs:
                   npm run build
                   xvfb-run -a npm run test:prod:travis
 
+  # NOTE: We're using the cypress orb instead of this job
   Test_third_party_dependencies:
     executor: default-executor
     steps:
@@ -84,6 +79,7 @@ workflows:
     jobs:
       - Unit_Tests_and_storybook_e2e
       - Production_CI_tests
-      - Test_third_party_dependencies
+      # NOTE: We're using the cypress orb instead of this job
+      #- Test_third_party_dependencies
       - cypress/run:
           command: npm run cypress:3rdParty
