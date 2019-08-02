@@ -25,7 +25,9 @@ commands:
       - run:
           name: Before Install
           command: |            
-            sudo apt update && sudo apt upgrade
+            sudo apt update
+            sudo apt install git
+            sudo apt upgrade
             #sudo apt-get install -y libgconf-2-4 libc6 libcurl3-gnutls libpcre2-8-0 software-properties-common
             #sudo add-apt-repository ppa:git-core/ppa -y
             #sudo apt-get update
