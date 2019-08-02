@@ -24,7 +24,12 @@ commands:
       #     key: dependency-cache-app{{ checksum "package.json" }}      
       - run:
           name: Before Install
-          command: sudo apt-get install -y libgconf-2-4
+          command: |
+            sudo apt-get install -y libgconf-2-4
+            sudo add-apt-repository ppa:git-core/ppa -y
+            sudo apt-get update
+            sudo apt-get install git -y
+            git --version
       - steps: << parameters.install-script >>
       - steps: << parameters.script >>
       - save_cache:
